@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const { enrichRoutes } = require("./routes");
 
 const PORT = process.env.PORT || 3000;
@@ -164,31 +165,6 @@ async function refreshAircraft() {
   }
 }
 
-/* =========================
-   STATIC FILE SERVING
-========================= */
-
-app.use(express.static(path.join(__dirname, "public")));
-
-/* =========================
-   API
-========================= */
-
-app.get("/api/aircraft", (req, res) => {
-  res.setHeader("Cache-Control", "no-store");
-  res.json(cache);
-});
-
-/* =========================
-   START SERVER
-========================= */
-
-app.listen(PORT, () => {
-  console.log(`NWA Aviation Dashboard running on port ${PORT}`);
-  console.log(
-    `Center: ${CENTER.zip} (${CENTER.lat}, ${CENTER.lon}) radius ${RADIUS_MILES} mi`
-  );
-});
 
 /* =========================
    BACKGROUND REFRESH
@@ -196,3 +172,56 @@ app.listen(PORT, () => {
 
 refreshAircraft();
 setInterval(refreshAircraft, REFRESH_MS);
+
+const http = require("http");
+const fs = require("fs");
+
+const PUBLIC_DIR = path.join(__dirname, "public");
+
+function serveStatic(req, res, filePath) {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      return res.end("Not found");
+    }
+
+    const ext = path.extname(filePath);
+
+    const MIME = {
+      ".html": "text/html",
+      ".css": "text/css",
+      ".js": "application/javascript",
+      ".png": "image/png",
+      ".ico": "image/x-icon",
+    };
+
+    res.writeHead(200, {
+      "Content-Type": MIME[ext] || "text/plain",
+    });
+
+    res.end(data);
+  });
+}
+
+const server = http.createServer((req, res) => {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+
+  if (url.pathname === "/api/aircraft") {
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    });
+    return res.end(JSON.stringify(cache));
+  }
+
+  const filePath = path.join(
+    PUBLIC_DIR,
+    url.pathname === "/" ? "index.html" : url.pathname
+  );
+
+  serveStatic(req, res, filePath);
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
