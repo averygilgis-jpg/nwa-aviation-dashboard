@@ -64,9 +64,9 @@ function normalizeCallsign(raw) {
 }
 
 function parseAirline(callsign) {
-  if (!callsign || callsign === "N/A") return "Unknown";
+  if (!callsign || callsign === "N/A") return "Private Owner";
   const prefix = callsign.replace(/[^A-Za-z].*$/, "").toUpperCase();
-  return AIRLINE_PREFIXES[prefix.slice(0, 3)] || "Unknown";
+  return AIRLINE_PREFIXES[prefix.slice(0, 3)] || "Private Owner";
 }
 
 function mapCategory(rawCategory) {
@@ -114,7 +114,7 @@ function transformAdsbAircraft(ac) {
     airline: parseAirline(ac.flight || ac.callsign),
     origin: "UNK",
     destination: "UNK",
-    type: (ac.t || ac.type || "").trim() || "Unknown",
+    type: (ac.t || ac.type || "").trim() || "Private Owner",
     speedMph: speedMphFromAdsb(ac),
     lat,
     lon,
