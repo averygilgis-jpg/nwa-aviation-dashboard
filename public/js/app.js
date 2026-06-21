@@ -23,6 +23,19 @@ let selectedId = null;
 const flightListEl = document.getElementById("flight-list");
 const statusEl = document.getElementById("status");
 
+/**
+ * Safe icon helper (prevents crash if icons.js fails to load)
+ */
+function getIcon(ac, isSelected) {
+  return (window.AircraftIcons?.createIcon
+    ? window.AircraftIcons.createIcon(ac.category, ac.color, ac.heading, isSelected)
+    : L.divIcon({
+        html: "✈️",
+        iconSize: [20, 20],
+        className: "fallback-icon",
+      }));
+}
+
 function setSelected(icao24) {
   selectedId = icao24;
 
@@ -33,20 +46,17 @@ function setSelected(icao24) {
   markers.forEach((marker, id) => {
     const ac = aircraftData.find((a) => a.icao24 === id);
     if (!ac) return;
+
     const isSelected = id === icao24;
-    marker.setIcon(
-      AircraftIcons.createIcon(ac.category, ac.color, ac.heading, isSelected)
-    );
-    if (isSelected) marker.setZIndexOffset(1000);
-    else marker.setZIndexOffset(0);
+    marker.setIcon(getIcon(ac, isSelected));
+
+    marker.setZIndexOffset(isSelected ? 1000 : 0);
   });
 }
 
 function scrollToRow(icao24) {
   const row = document.querySelector(`.flight-row[data-icao="${icao24}"]`);
-  if (row) {
-    row.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
+  if (row) row.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function selectFromMap(icao24) {
@@ -57,13 +67,15 @@ function selectFromMap(icao24) {
 function selectFromSidebar(icao24) {
   const ac = aircraftData.find((a) => a.icao24 === icao24);
   if (!ac) return;
+
   setSelected(icao24);
   map.panTo([ac.lat, ac.lon], { animate: true, duration: 0.5 });
 }
 
 function renderSidebar(aircraft) {
   if (aircraft.length === 0) {
-    flightListEl.innerHTML = '<p class="flight-empty">No aircraft in range</p>';
+    flightListEl.innerHTML =
+      '<p class="flight-empty">No aircraft in range</p>';
     return;
   }
 
@@ -72,7 +84,6 @@ function renderSidebar(aircraft) {
       (ac) => `
     <article
       class="flight-row${ac.icao24 === selectedId ? " selected" : ""}"
-      role="listitem"
       data-icao="${ac.icao24}"
     >
       <div class="flight-row-color" style="background:${ac.color}"></div>
@@ -91,7 +102,9 @@ function renderSidebar(aircraft) {
     .join("");
 
   flightListEl.querySelectorAll(".flight-row").forEach((row) => {
-    row.addEventListener("click", () => selectFromSidebar(row.dataset.icao));
+    row.addEventListener("click", () =>
+      selectFromSidebar(row.dataset.icao)
+    );
   });
 }
 
@@ -106,6 +119,7 @@ function escapeHtml(str) {
 function updateMarkers(aircraft) {
   const incoming = new Set(aircraft.map((a) => a.icao24));
 
+  // remove old markers
   markers.forEach((marker, id) => {
     if (!incoming.has(id)) {
       map.removeLayer(marker);
@@ -115,7 +129,7 @@ function updateMarkers(aircraft) {
 
   aircraft.forEach((ac) => {
     const isSelected = ac.icao24 === selectedId;
-    const icon = AircraftIcons.createIcon(ac.category, ac.color, ac.heading, isSelected);
+    const icon = getIcon(ac, isSelected);
 
     if (markers.has(ac.icao24)) {
       const marker = markers.get(ac.icao24);
@@ -136,6 +150,7 @@ function updateMarkers(aircraft) {
 
 function formatStatus(payload) {
   const count = payload.aircraft?.length ?? 0;
+
   const time = payload.updatedAt
     ? new Date(payload.updatedAt).toLocaleTimeString([], {
         hour: "numeric",
@@ -143,9 +158,11 @@ function formatStatus(payload) {
         second: "2-digit",
       })
     : "—";
+
   if (payload.error) {
     return `${count} aircraft · Updated ${time} · ${payload.error}`;
   }
+
   return `${count} aircraft · Updated ${time}`;
 }
 
@@ -153,13 +170,17 @@ async function refresh() {
   try {
     const res = await fetch(`/api/aircraft?t=${Date.now()}`, {
       cache: "no-store",
-      headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
     });
+
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const payload = await res.json();
+
     aircraftData = payload.aircraft || [];
+
     updateMarkers(aircraftData);
     renderSidebar(aircraftData);
+
     statusEl.textContent = formatStatus(payload);
   } catch (err) {
     statusEl.textContent = `Unable to load aircraft data · ${err.message}`;
