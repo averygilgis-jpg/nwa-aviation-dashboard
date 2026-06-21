@@ -1,3 +1,4 @@
+console.log("ICONS FILE LOADED");
 const AircraftIcons = {
   svgs: {
     "fixed-wing": `<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
