@@ -1,5 +1,6 @@
-const path = require("path");
+const http = require("http");
 const fs = require("fs");
+const path = require("path");
 const { enrichRoutes } = require("./routes");
 
 const PORT = process.env.PORT || 3000;
@@ -173,8 +174,7 @@ async function refreshAircraft() {
 refreshAircraft();
 setInterval(refreshAircraft, REFRESH_MS);
 
-const http = require("http");
-const fs = require("fs");
+
 
 const PUBLIC_DIR = path.join(__dirname, "public");
 
