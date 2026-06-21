@@ -95,7 +95,7 @@ function renderSidebar(aircraft) {
       </div>
       <div class="flight-row-meta">
         <div class="flight-speed">${ac.speedMph} mph</div>
-        <div class="flight-distance">${ac.distanceMi} mi</div>
+        <div class="flight-distance">${ac.distanceMi} miles from Rogers, AR</div>
       </div>
     </article>`
     )
