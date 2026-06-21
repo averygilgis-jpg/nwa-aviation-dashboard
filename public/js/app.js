@@ -20,7 +20,7 @@ const markers = new Map();
 let aircraftData = [];
 let selectedId = null;
 
-const flightListEl = document.getElementById("flight-list");
+const flightListEl = document.getElementById("list");
 const statusEl = document.getElementById("status");
 
 /**
@@ -95,7 +95,7 @@ function renderSidebar(aircraft) {
       </div>
       <div class="flight-row-meta">
         <div class="flight-speed">${ac.speedMph} mph</div>
-        <div class="flight-distance">Distance from 72758: ${ac.distanceMi} mi</div>
+        <div class="flight-distance">Distance from Rogers, AR: ${ac.distanceMi} mi</div>
       </div>
     </article>`
     )
