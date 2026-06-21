@@ -1,0 +1,190 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: #0a0a0a;
+  color: #e8e8e8;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+#app {
+  display: flex;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+#map {
+  flex: 0 0 66%;
+  min-width: 0;
+  background: #000;
+}
+
+#sidebar {
+  flex: 0 0 34%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  border-left: 1px solid #222;
+}
+
+.sidebar-header {
+  padding: 1rem 1.1rem 0.75rem;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
+}
+
+.sidebar-header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.sidebar-subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.sidebar-status {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: #666;
+}
+
+.flight-list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.flight-row {
+  display: grid;
+  grid-template-columns: 4px 1fr auto;
+  gap: 0 0.75rem;
+  align-items: start;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #1a1a1a;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  min-height: 44px;
+}
+
+.flight-row:hover {
+  background: #1a1a1a;
+}
+
+.flight-row.selected {
+  background: #1e1e2a;
+}
+
+.flight-row-color {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+}
+
+.flight-row-main {
+  min-width: 0;
+}
+
+.flight-callsign {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.03em;
+}
+
+.flight-airline {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 0.15rem;
+}
+
+.flight-route {
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-top: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.flight-type {
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 0.2rem;
+}
+
+.flight-row-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.flight-speed {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.flight-distance {
+  font-size: 0.72rem;
+  color: #666;
+  margin-top: 0.25rem;
+  white-space: nowrap;
+}
+
+.flight-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.leaflet-container {
+  background: #000;
+  font-family: inherit;
+}
+
+.aircraft-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.aircraft-marker svg {
+  display: block;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.aircraft-marker.selected svg {
+  filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor);
+}
+
+@media (orientation: portrait) {
+  #app {
+    flex-direction: column;
+  }
+
+  #map {
+    flex: 0 0 55%;
+  }
+
+  #sidebar {
+    flex: 1;
+    border-left: none;
+    border-top: 1px solid #222;
+  }
+}
