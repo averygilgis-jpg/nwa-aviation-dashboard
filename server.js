@@ -64,9 +64,12 @@ function normalizeCallsign(raw) {
 }
 
 function parseAirline(callsign) {
-  if (!callsign || callsign === "N/A") return "Unknown";
+  if (!callsign || callsign === "N/A") return "Private Owner";
+
   const prefix = callsign.replace(/[^A-Za-z].*$/, "").toUpperCase();
-  return AIRLINE_PREFIXES[prefix.slice(0, 3)] || "Unknown";
+
+  const airline = AIRLINE_PREFIXES[prefix.slice(0, 3)];
+  return airline || "Private Owner";
 }
 
 function mapCategory(rawCategory) {
