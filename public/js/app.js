@@ -1,5 +1,5 @@
 const CENTER = [36.332, -94.118];
-const INITIAL_ZOOM = 8;
+const INITIAL_ZOOM = 9;
 const REFRESH_MS = 60_000;
 
 const map = L.map("map", {
@@ -95,7 +95,7 @@ function renderSidebar(aircraft) {
       </div>
       <div class="flight-row-meta">
         <div class="flight-speed">${ac.speedMph} mph</div>
-        <div class="flight-distance">${ac.distanceMi} mi</div>
+        <div class="flight-distance">${ac.distanceMi} miles from Rogers, AR</div>
       </div>
     </article>`
     )
