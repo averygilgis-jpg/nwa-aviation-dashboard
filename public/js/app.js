@@ -1,5 +1,5 @@
 const CENTER = [36.332, -94.118];
-const INITIAL_ZOOM = 10;
+const INITIAL_ZOOM = 9;
 const REFRESH_MS = 60_000;
 
 const map = L.map("map", {
